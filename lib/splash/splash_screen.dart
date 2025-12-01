@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:runway/pages/home.dart';
+import 'package:runway/splash/animationLine.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,7 +14,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Future.delayed(Duration(milliseconds: 800), () {
+    Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Home()),
@@ -33,9 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Center(child: SvgPicture.asset("assets/images/logo/Runway.svg")),
             Gap(5),
-            Center(
-              child: SvgPicture.asset("assets/images/logo/Rectangle 9.svg"),
-            ),
+            AnimationLine(),
           ],
         ),
       ),

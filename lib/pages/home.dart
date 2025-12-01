@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:runway/models/category_model.dart';
+import 'package:runway/pages/category_screen.dart';
 import 'package:runway/widget/custom_appbar.dart';
-// import 'package:video_player/video_player.dart';
+import 'package:video_player/video_player.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,18 +13,24 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // late VideoPlayerController _controller;
+  late VideoPlayerController _controller;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _controller = VideoPlayerController.asset("assets/images/videos/video1.mp4")
-  //     ..initialize().then((_) {
-  //       setState(() {
-  //         _controller.play();
-  //       });
-  //     });
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.asset("assets/images/videos/video1.mp4")
+      ..initialize().then((_) {
+        setState(() {
+          // _controller.play();
+        });
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   List<CategoryModel> categories = [
     CategoryModel(image: "assets/images/category/women.png", name: "Women"),
@@ -52,7 +59,7 @@ class _HomeState extends State<Home> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset("assets/images/svg_icons/heart.svg"),
+            icon: SvgPicture.asset("assets/images/svg_icons/heart.svg",width: 30,height: 20,),
             label: "Likes",
           ),
           BottomNavigationBarItem(
@@ -77,26 +84,47 @@ class _HomeState extends State<Home> {
           ),
 
           // ======= video ======= //
-          // Column(
-          //   children: [
-          //     AspectRatio(
-          //       aspectRatio: _controller.value.aspectRatio,
-          //       child: VideoPlayer(_controller),
-          //     ),
-          //   ],
-          // ),
-          SizedBox(
-            width: double.infinity,
-            height: 500,
-            // color: Colors.red,
-            child: Image.asset(
-              "assets/images/New folder (3)/Cloth 1.png",
-              fit: BoxFit.cover,
-            ),
-          ),
+          _controller.value.isInitialized
+              ? Stack(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (_controller.value.isPlaying) {
+                            _controller.pause();
+                          } else {
+                            _controller.play();
+                          }
+                        });
+                      },
+                      child: AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio,
+                        child: VideoPlayer(_controller),
+                      ),
+                    ),
+
+
+                    // شريط التقدم slider
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 10,
+                      child: VideoProgressIndicator(
+                        _controller,
+                        allowScrubbing: true,
+                        colors: VideoProgressColors(
+                          playedColor: Colors.red,
+                          backgroundColor: Colors.white30,
+                          bufferedColor: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : CircularProgressIndicator(),
 
           // ======= && ======= //
-          SizedBox(height: 15),
+          SizedBox(height: 20),
           // ======= && ======= //
 
           // ======= Categories ======= //
@@ -111,7 +139,7 @@ class _HomeState extends State<Home> {
                 ),
 
                 // ======= && ======= //
-                SizedBox(height: 20),
+                SizedBox(height: 25),
 
                 // ======= && ======= //
                 SingleChildScrollView(
@@ -121,37 +149,46 @@ class _HomeState extends State<Home> {
                     children: [
                       ...List.generate(categories.length, (i) {
                         final item = categories[i];
-                        return Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey,
-                                shape: BoxShape.circle,
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CategoryScreen(),
                               ),
-                              width: 70,
-                              height: 70,
-                              child: ClipOval(
-                                child: Image.asset(
-                                  item.image,
-                                  // "assets/images/category/image (1).png",
-                                  fit: BoxFit.cover,
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  shape: BoxShape.circle,
+                                ),
+                                width: 70,
+                                height: 70,
+                                child: ClipOval(
+                                  child: Image.asset(
+                                    item.image,
+                                    // "assets/images/category/image (1).png",
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            // ======= && ======= //
-                            SizedBox(height: 10),
+                              // ======= && ======= //
+                              SizedBox(height: 10),
 
-                            // ======= && ======= //
-                            Text(
-                              // "Men",
-                              item.name,
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
+                              // ======= && ======= //
+                              Text(
+                                item.name,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         );
                       }),
                     ],

@@ -47,7 +47,7 @@ class ItemsProduct extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "£${price}",
+                          "£$price",
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
